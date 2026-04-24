@@ -27,6 +27,13 @@ public class MazePanel extends JPanel {
     private boolean settingStart = false;
     private boolean settingEnd   = false;
 
+    // Visited color changes per algorithm (set by ControlPanel before solving)
+    private Color visitedColor = new Color(125, 211, 252);
+
+    // Callbacks so ControlPanel knows when start/end placement finishes
+    private Runnable onStartSet;
+    private Runnable onEndSet;
+
     public MazePanel(Grid grid) {
         this.grid = grid;
         int w = grid.getCols() * CELL_SIZE;
@@ -66,12 +73,14 @@ public class MazePanel extends JPanel {
             startCell = cell;
             cell.type = CellType.START;
             settingStart = false;
+            if (onStartSet != null) onStartSet.run();
         } else if (settingEnd) {
             if (cell == startCell) return;
             if (endCell != null) endCell.type = CellType.EMPTY;
             endCell = cell;
             cell.type = CellType.END;
             settingEnd = false;
+            if (onEndSet != null) onEndSet.run();
         } else {
             toggleWall(e, cell);
         }
@@ -135,11 +144,11 @@ public class MazePanel extends JPanel {
     private Color colorFor(CellType type) {
         switch (type) {
             case WALL:    return new Color(15, 15, 20);
-            case START:   return new Color(34, 197, 94);   // green
-            case END:     return new Color(239, 68, 68);   // red
-            case VISITED: return new Color(125, 211, 252); // light blue
-            case PATH:    return new Color(250, 204, 21);  // yellow
-            default:      return new Color(245, 245, 250); // near-white
+            case START:   return new Color(34, 197, 94);  // green
+            case END:     return new Color(239, 68, 68);  // red
+            case VISITED: return visitedColor;            // dynamic per algorithm
+            case PATH:    return new Color(250, 204, 21); // yellow
+            default:      return new Color(245, 245, 250);
         }
     }
 
@@ -149,6 +158,11 @@ public class MazePanel extends JPanel {
 
     public void setSettingStart(boolean v) { settingStart = v; settingEnd = false; }
     public void setSettingEnd(boolean v)   { settingEnd = v;   settingStart = false; }
+
+    public void setVisitedColor(Color c)    { this.visitedColor = c; }
+    public Color getVisitedColor()          { return visitedColor; }
+    public void setOnStartSet(Runnable r)   { this.onStartSet = r; }
+    public void setOnEndSet(Runnable r)     { this.onEndSet   = r; }
 
     public Cell getStartCell() { return startCell; }
     public Cell getEndCell()   { return endCell; }

@@ -20,10 +20,16 @@ public class MazeFrame extends JFrame {
         MazePanel   mazePanel    = new MazePanel(grid);
         ControlPanel controlPanel = new ControlPanel(mazePanel);
 
-        JPanel root = new JPanel(new BorderLayout(10, 0));
-        root.setBackground(new Color(18, 18, 28));
-        root.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Thin separator between grid and sidebar
+        JSeparator sep = new JSeparator(JSeparator.VERTICAL);
+        sep.setForeground(new Color(40, 40, 60));
+        sep.setPreferredSize(new Dimension(1, 0));
+
+        JPanel root = new JPanel(new BorderLayout(0, 0));
+        root.setBackground(new Color(13, 13, 22));
+        root.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         root.add(mazePanel,    BorderLayout.CENTER);
+        root.add(sep,          BorderLayout.EAST);
         root.add(controlPanel, BorderLayout.EAST);
 
         setContentPane(root);
